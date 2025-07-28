@@ -46,7 +46,7 @@ int read_students(Student students[]) {
     scanf("%d", &students[*count].age);
     do {
         printf("Enter Gender M for boy / F for girl: ");
-        scanf(" %c ", &students[*count].Gender);
+        scanf("%c", &students[*count].Gender);
         g = toupper( students[*count].Gender);  
     }while (g != 'M' && g != 'F');
 
@@ -58,6 +58,20 @@ int read_students(Student students[]) {
     
 
     (*count)++;
+
+    FILE *file = open_file("students.txt", "a");
+    if (file != NULL) 
+    {
+        fprintf(file, "%d %s %d %c %.2f %s\n",
+                students[*count - 1].Id,
+                students[*count - 1].name,
+                students[*count - 1].age,
+                students[*count - 1].Gender,
+                students[*count - 1].grade,
+                students[*count - 1].class_name);
+        fclose(file);
+    }
+
 }
 
 void print_students(Student students[], int count) {
@@ -80,13 +94,14 @@ void sorted_students (Student students[], int cont)
     {
         for(int j = 0 ; j < cont - i - 1 ; j++ )
         {
-            if ( students[i].grade < students[j+1].grade)
+            if (students[j].grade < students[j + 1].grade)  
             {
-               Student temp = students[j];
-                students[j] = students[j+1];
-                students[j+1] = temp;
+                Student temp = students[j];
+                students[j] = students[j + 1];
+                students[j + 1] = temp;
             }
-        }
+
+         }
     }
 
 }
@@ -164,7 +179,7 @@ void save_by_Gender (Student students[], int count )
      {
          if (toupper(students[i].Gender) == 'M')
          {
-                    fprintf (boys_file , " %d %S  %d %c %.2f %s\n", 
+                    fprintf (boys_file , " %d %s %d %c %.2f %s\n", 
                     students[i].Id,
                     students[i].name,
                     students[i].age,

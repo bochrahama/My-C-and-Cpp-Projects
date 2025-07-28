@@ -3,7 +3,39 @@
 #include "student.h"
 
  char g ;
-void add_student(Student students[], int *count) {
+
+//creat a File and openet
+FILE* open_file(const char *filename, const char *mode) {
+    FILE *file = fopen(filename, mode);
+    if (file == NULL) {
+        printf("Error opening file: %s\n", filename);
+    }
+    return file;
+}
+//read file information 
+int read_students(Student students[]) {
+    FILE *file = open_file("students.txt", "r");
+    if (file == NULL) {
+        return 0;
+    }
+
+    int count = 0;
+    while (fscanf(file, "%d %s %d %c %f %s", 
+                  &students[count].Id, 
+                  students[count].name, 
+                  &students[count].age, 
+                  &students[count].Gender, 
+                  &students[count].grade, 
+                  students[count].class_name) == 6) {
+        count++;
+    }
+ // To know the real number of students 
+    fclose(file) ;
+    return count;
+}
+
+
+ void add_student(Student students[], int *count) {
     printf("Enter ID : ");
     scanf("%d", &students[*count].Id);
     
@@ -39,3 +71,126 @@ void print_students(Student students[], int count) {
         printf("Grade: %.2f\n", students[i].grade);
     }
 }
+
+//sort students containing the same studentd sorted 
+
+void sorted_students (Student students[], int cont)
+{
+    for (int i = 0; i < cont-1 ; i++ )
+    {
+        for(int j = 0 ; j < cont - i - 1 ; j++ )
+        {
+            if ( students[i].grade < students[j+1].grade)
+            {
+               Student temp = students[j];
+                students[j] = students[j+1];
+                students[j+1] = temp;
+            }
+        }
+    }
+
+}
+
+//Save them in a file
+
+void save_sorted_students (Student students[], int count )
+{
+    sorted_students (students , count );
+
+    FILE *file = open_file("sorted_students.txt", "w");
+    if (file == NULL) {
+        printf("Failed to create sorted students file\n");
+        return;
+    }
+    for (int i = 0; i < count; i++) {
+        fprintf(file, "%d %s %d %c %.2f %s\n", 
+                students[i].Id,
+                students[i].name,
+                students[i].age,
+                students[i].Gender,
+                students[i].grade,
+                students[i].class_name);
+    }
+    fclose(file);
+    printf("Students saved to sorted_students.txt successfully\n");
+} 
+
+void passed_students (Student students[], int count)
+{
+  FILE *file = open_file("passed_student.txt " , "w" ) ;
+      if (file == NULL) 
+      {
+         printf("Failed to create sorted students file\n");
+          return;
+      }
+            
+     for (int i = 0 ; i < count ; i++ ) 
+        {
+         if(students[i].grade > 10 )
+            {
+              fprintf (file ," %d %s %d %c %.2f %s\n", 
+                 students[i].Id,
+                 students[i].name,
+                 students[i].age,
+                 students[i].Gender,
+                 students[i].grade,
+                 students[i].class_name);
+             }
+    
+         }
+    fclose(file);
+    printf("Students saved passed_students.txt successfully \n ");
+}
+
+void save_by_Gender (Student students[], int count )
+ {
+    FILE *boys_file = open_file("boys.txt", "w");
+        if (boys_file == NULL)
+       {
+             printf("Failed to create boys file\n");
+            return;
+       }
+
+
+    FILE *girls_file = open_file("girls.txt", "w");
+         if (girls_file == NULL)
+        {
+            printf("Failed to create girls file\n"); 
+            fclose(boys_file); 
+            return;
+        }
+
+     for (int i = 0 ; i <count ; i++ )
+     {
+         if (toupper(students[i].Gender) == 'M')
+         {
+                    fprintf (boys_file , " %d %S  %d %c %.2f %s\n", 
+                    students[i].Id,
+                    students[i].name,
+                    students[i].age,
+                    students[i].Gender,
+                    students[i].grade,
+                    students[i].class_name);
+          }  
+         else if (toupper(students[i].Gender) == 'F')
+                  {
+     
+                     fprintf(girls_file, "%d %s %d %c %.2f %s\n", 
+                        students[i].Id,
+                        students[i].name,
+                        students[i].age,
+                        students[i].Gender,
+                        students[i].grade,
+                        students[i].class_name);
+                  }
+    }
+
+
+        fclose(boys_file);
+        fclose(girls_file);
+
+
+
+         
+ }           
+ 
